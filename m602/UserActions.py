@@ -8,7 +8,7 @@ UserMenuActions = {
 }
 
 
-def show_menu():
+def show_main_menu():
     """
     Displays a set of options for the menu.
     :return: The user's choice.
