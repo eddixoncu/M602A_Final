@@ -1,5 +1,5 @@
 from os import system, name
-from m602.EmissionsCalculator import EmissionsCalculator
+from m602.ActionProcessor import ActionProcessor
 import m602.UserActions as Actions
 
 
@@ -20,24 +20,17 @@ def main():
     Main program
     """
     option = -1
+    processor = ActionProcessor (Actions.UserMenuActions["EXIT"])
 
     while True:
         option = Actions.show_main_menu()
-
-        if option == Actions.UserMenuActions["CREATE"]:
-            print("Creating")
-        elif option == Actions.UserMenuActions["UPDATE"]:
-            print("Updating")
-        elif option == Actions.UserMenuActions["READ_ALL"]:
-            print("Reading")
-        elif option == Actions.UserMenuActions["GENERATE_REPORT"]:
-            print("Generating")
-        elif option == Actions.UserMenuActions["EXIT"]:
-            print("LEAVING")
+        if option == Actions.UserMenuActions["EXIT"]:
             break
+        processor.option = option
+        processor.execute()
 
-    # clear()
-    print("END111")
+    clear()
+    print("\nEND!!!")
 
 
 if __name__ == "__main__":
