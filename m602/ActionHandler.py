@@ -1,8 +1,15 @@
-from m602.UserActions import UserMenuActions as Actions
+"""
+Contains classes intended for managing the user's request.
+"""
 
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Optional
+from m602.UserActions import UserMenuActions as Actions
+from m602.UserActions import show_emission_options
+from m602.EmissionsCalculator import EmissionsCalculator
+from m602.Emission import Emission
+
 
 class Handler(ABC):
     """
@@ -12,10 +19,18 @@ class Handler(ABC):
 
     @abstractmethod
     def set_next(self, handler: Handler) -> Handler:
+        """
+        Abstract method that sets a new handler to the chain.
+        :param handler: Handler to be added.
+        """
         pass
 
     @abstractmethod
     def handle(self, request) -> Optional[str]:
+        """
+        Abstract method tha handles the user's request.
+        :param request: Request to be processed.
+        """
         pass
 
 
@@ -28,36 +43,83 @@ class AbstractHandler(Handler):
     _next_handler: Handler = None
 
     def set_next(self, handler: Handler) -> Handler:
+        """
+        Returning a handler from here will let us link handlers in a convenient way like this:
+        handler_1.set_next(handler_2).set_next(handler_3)....set(handler_n)
+        :param handler: Handler to be added to the chain
+        :return: The added handler.
+        """
         self._next_handler = handler
-        # Returning a handler from here will let us link handlers in a
-        # convenient way like this:
-        # monkey.set_next(squirrel).set_next(dog)
+
         return handler
 
     @abstractmethod
-    def handle(self, request: Any) -> str:
+    def handle(self, request: Any) -> str | None:
         if self._next_handler:
             return self._next_handler.handle(request)
 
         return None
 
 
+class CreateHandler(AbstractHandler):
+    def handle(self, request):
+        if request == Actions["CREATE"]:
+            print("Creating from handler")
+            emission_type = show_emission_options()
+            if emission_type == 0:
+                return
 
-class ActionProcessor :
+            year = int(input("Enter the year to be calculated"))
+            electricity_bill = float(input("Enter the average monthly electricity bill: "))
+            gas_bill = float(input("Enter the average monthly gas bill: "))
+            fuel_bill = float(input("Enter the average monthly fuel bill: "))
+            calculator = EmissionsCalculator()
+            total_energy_emission = calculator.calculate_energy_emissions(electricity_bill, gas_bill, fuel_bill)
+            emission = Emission(year, total_energy_emission)
+        else:
+            super().handle(request)
+
+
+class UpdateHandler(AbstractHandler):
+    def handle(self, request):
+        if request == Actions["UPDATE"]:
+            print("Updating from handler")
+        else:
+            super().handle(request)
+
+
+class GetAllHandler(AbstractHandler):
+    def handle(self, request):
+        if request == Actions["READ_ALL"]:
+            print("Requesting from handler")
+        else:
+            super().handle(request)
+
+
+class GenerateReportHandler(AbstractHandler):
+    def handle(self, request):
+        if request == Actions["GENERATE_REPORT"]:
+            print("Generating from handler")
+        else:
+            super().handle(request)
+
+
+class ActionHandler:
+    """
+    Class the manage the user's choice.
+    """
     def __init__(self, option) -> None:
         self.option = option
 
-
     def execute(self):
+        """
+        Executes the user's choice with a chain of handlers.
+        """
+        create_handler = CreateHandler()
+        update_handler = UpdateHandler()
+        get_all_data_handler = GetAllHandler()
+        generate_resport_handler = GenerateReportHandler()
 
-        if self.option == Actions["CREATE"]:
-            print("Creating")
-        elif self.option == Actions["UPDATE"]:
-            print("Updating")
-        elif self.option == Actions["READ_ALL"]:
-            print("Reading")
-        elif self.option == Actions["GENERATE_REPORT"]:
-            print("Generating")
-        elif self.option == Actions["EXIT"]:
-            print("LEAVING")
+        create_handler.set_next(update_handler).set_next(generate_resport_handler).set_next(get_all_data_handler)
 
+        create_handler.handle(self.option)

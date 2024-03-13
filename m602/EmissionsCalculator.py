@@ -1,3 +1,7 @@
+"""
+Contains classes intended for calculating CO2 emission from different sources.
+"""
+
 CONST_ELECTRICITY_BILL = 0.0005
 CONST_GAS_BILL = 0.0053
 CONST_FUEL_BILL = 2.32
@@ -25,7 +29,7 @@ class EmissionsCalculator:
         fuel_emission = fuel_bill * 12 * CONST_FUEL_BILL
         return electricity_emission + gas_emission + fuel_emission
 
-    def calculate_waste_emssions(self, generated_waste, disposed_wasted):
+    def calculate_waste_emissions(self, generated_waste, disposed_wasted):
         """
         Calculates the yearly emitted CO2 from waste
         :param: generated_waste

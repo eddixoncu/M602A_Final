@@ -1,3 +1,7 @@
+"""
+Contains general purpose constants and functions
+"""
+
 UserMenuActions = {
     "EXIT": 0,
     "CREATE": 1,
@@ -5,6 +9,12 @@ UserMenuActions = {
     "READ_ALL": 3,
     "GENERATE_REPORT": 4,
     "CLEAR": 5,
+}
+
+EmissionType = {
+    "ENERGY": 1,
+    "WASTE": 2,
+    "TRAVEL": 3,
 }
 
 
@@ -20,7 +30,7 @@ def show_main_menu():
     print("[4]\tGENERATE REPORT")
     print("[5]\tCLEAR SCREEN")
 
-    option = input(">> ")
+    option = input("\n>> ")
     return validate_input(option)
 
 
@@ -40,3 +50,20 @@ def validate_input(data):
     except ValueError:
         value = 0
     return value
+
+
+def show_emission_options():
+    """
+    Displays a set of options for the type of emissions menu.
+    :return: The user's choice.
+    """
+    try:
+        print("What kind of CO2 emission do you want to calculate? ")
+        print("[1]\tEnergy")
+        print("[2]\tWaste")
+        print("[3]\tTravel")
+        emission_type = int(input(">> "))
+        return emission_type
+
+    except ValueError:
+        return 0
