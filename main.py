@@ -1,5 +1,5 @@
 from os import system, name
-from m602.ActionProcessor import ActionProcessor
+from m602.ActionHandler import ActionHandler
 import m602.UserActions as Actions
 
 
@@ -20,7 +20,7 @@ def main():
     Main program
     """
     option = -1
-    processor = ActionProcessor (Actions.UserMenuActions["EXIT"])
+    processor = ActionHandler (Actions.UserMenuActions["EXIT"])
 
     while True:
         option = Actions.show_main_menu()
@@ -30,7 +30,7 @@ def main():
         processor.execute()
 
     clear()
-    print("\nEND!!!")
+    print("\nEND!!!\n")
 
 
 if __name__ == "__main__":
