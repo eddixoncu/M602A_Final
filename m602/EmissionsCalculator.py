@@ -19,9 +19,9 @@ class EmissionsCalculator:
     def calculate_energy_emissions(self, electricity_bill, gas_bill, fuel_bill):
         """
         Calculates the yearly emitted CO2 from energy usage of sources such electricity, gas, and fuel.
-        :param: electricity_bill: Average monthly electricity bill in euros.
-        :param: gas_bill: Average monthly gas bill in euros.
-        :param: fuel_bill:Average monthly fuel in euros.
+        :param electricity_bill: Average monthly electricity bill in euros.
+        :param gas_bill: Average monthly gas bill in euros.
+        :param fuel_bill: Average monthly fuel in euros.
         :return: The emitted amount of kilograms of CO2
         """
         electricity_emission = electricity_bill * 12 * CONST_ELECTRICITY_BILL
@@ -32,8 +32,8 @@ class EmissionsCalculator:
     def calculate_waste_emissions(self, generated_waste, disposed_wasted):
         """
         Calculates the yearly emitted CO2 from waste
-        :param: generated_waste
-        :param: disposed_wasted
+        :param generated_waste: Generated waste in Kg
+        :param disposed_wasted: Percentage of recycled or decomposed waste (0-100)%
         :return: The emitted amount of kilograms of CO2
         """
         disposed_wasted /= 100
@@ -42,8 +42,8 @@ class EmissionsCalculator:
 
     def calculate_travel_emissions(self, kilometers_traveled, avg_fuel_efficiency):
         """
-        :param: kilometers_traveled: Kilometres traveled per year
-        :param: avg_fuel_efficiency: Fuel efficiency measured in liters per 100 Km
+        :param kilometers_traveled: Kilometres traveled per year
+        :param avg_fuel_efficiency: Fuel efficiency measured in liters per 100 Km
         :return: The emitted amount of kilograms of CO2
         """
         travel_emission = kilometers_traveled * (1 / avg_fuel_efficiency) * CONST_FUEL_EFFICIENCY

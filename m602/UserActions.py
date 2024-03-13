@@ -1,6 +1,7 @@
 """
 Contains general purpose constants and functions
 """
+from os import system, name
 
 UserMenuActions = {
     "EXIT": 0,
@@ -67,3 +68,15 @@ def show_emission_options():
 
     except ValueError:
         return 0
+
+
+def clear():
+    """
+    Check and make call clear command for specific operating system
+    """
+    if name == 'nt':
+        _ = system('cls')
+
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')

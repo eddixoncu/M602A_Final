@@ -5,7 +5,7 @@ Contains classes intended for managing the user's request.
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Optional
-from m602.UserActions import UserMenuActions as Actions
+from m602.UserActions import UserMenuActions as Actions, EmissionType
 from m602.UserActions import show_emission_options
 from m602.EmissionsCalculator import EmissionsCalculator
 from m602.Emission import Emission
@@ -69,13 +69,25 @@ class CreateHandler(AbstractHandler):
             if emission_type == 0:
                 return
 
-            year = int(input("Enter the year to be calculated"))
-            electricity_bill = float(input("Enter the average monthly electricity bill: "))
-            gas_bill = float(input("Enter the average monthly gas bill: "))
-            fuel_bill = float(input("Enter the average monthly fuel bill: "))
+            year = int(input("Enter the year to be calculated: \n"))
             calculator = EmissionsCalculator()
-            total_energy_emission = calculator.calculate_energy_emissions(electricity_bill, gas_bill, fuel_bill)
-            emission = Emission(year, total_energy_emission)
+            emission = None
+            if emission_type == EmissionType["ENERGY"]:
+                electricity_bill = float(input("Enter the average monthly electricity bill: "))
+                gas_bill = float(input("Enter the average monthly gas bill: "))
+                fuel_bill = float(input("Enter the average monthly fuel bill: "))
+                total_energy_emission = calculator.calculate_energy_emissions(electricity_bill, gas_bill, fuel_bill)
+                emission = Emission(year, total_energy_emission)
+            elif emission_type == EmissionType["WASTE"]:
+                generated_waste = float(input("Enter the average of generated wasted in Kg: "))
+                percentage = float(input("Enter the percentage of recycled/composted waste (0-100)%"))
+                total_waste_emission = calculator.calculate_waste_emissions(generated_waste, percentage)
+                emission = Emission(year, total_waste_emission)
+            elif emission_type == EmissionType["TRAVEL"]:
+                kilometers_traveled = float(input("Enter the kilometres traveled by your employees: "))
+                avg_fuel_efficiency = float(input("Enter the fuel efficiency in liters per 100 Km: "))
+                travel_emission = calculator.calculate_travel_emissions(kilometers_traveled, avg_fuel_efficiency)
+                emission = Emission(year, travel_emission)
         else:
             super().handle(request)
 
@@ -84,6 +96,29 @@ class UpdateHandler(AbstractHandler):
     def handle(self, request):
         if request == Actions["UPDATE"]:
             print("Updating from handler")
+            emission_type = show_emission_options()
+            if emission_type == 0:
+                return
+
+            year = int(input("Enter the year to be calculated: \n"))
+            calculator = EmissionsCalculator()
+            emission = None
+            if emission_type == EmissionType["ENERGY"]:
+                electricity_bill = float(input("Enter the average monthly electricity bill: "))
+                gas_bill = float(input("Enter the average monthly gas bill: "))
+                fuel_bill = float(input("Enter the average monthly fuel bill: "))
+                total_energy_emission = calculator.calculate_energy_emissions(electricity_bill, gas_bill, fuel_bill)
+                emission = Emission(year, total_energy_emission)
+            elif emission_type == EmissionType["WASTE"]:
+                generated_waste = float(input("Enter the average of generated wasted in Kg: "))
+                percentage = float(input("Enter the percentage of recycled/composted waste (0-100)%"))
+                total_waste_emission = calculator.calculate_waste_emissions(generated_waste, percentage)
+                emission = Emission(year, total_waste_emission)
+            elif emission_type == EmissionType["TRAVEL"]:
+                kilometers_traveled = float(input("Enter the kilometres traveled by your employees: "))
+                avg_fuel_efficiency = float(input("Enter the fuel efficiency in liters per 100 Km: "))
+                travel_emission = calculator.calculate_travel_emissions(kilometers_traveled, avg_fuel_efficiency)
+                emission = Emission(year, travel_emission)
         else:
             super().handle(request)
 
@@ -108,6 +143,7 @@ class ActionHandler:
     """
     Class the manage the user's choice.
     """
+
     def __init__(self, option) -> None:
         self.option = option
 
