@@ -24,7 +24,7 @@ def show_main_menu():
     Displays a set of options for the menu.
     :return: The user's choice.
     """
-    print("Please enter the action you want to perform, or press any key to exit")
+    print("\nPlease choose and option to perform and then press ENTER")
     print("[1]\tCREATE RECORD")
     print("[2]\tUPDATE RECORD")
     print("[3]\tSEE ALL DATA")

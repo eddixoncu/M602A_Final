@@ -9,6 +9,7 @@ from m602.UserActions import UserMenuActions as Actions, EmissionType
 from m602.UserActions import show_emission_options
 from m602.EmissionsCalculator import EmissionsCalculator
 from m602.Emission import Emission
+from m602.Store import Store
 
 
 class Handler(ABC):
@@ -41,6 +42,7 @@ class AbstractHandler(Handler):
     """
 
     _next_handler: Handler = None
+    _store: Store = Store()
 
     def set_next(self, handler: Handler) -> Handler:
         """
@@ -126,7 +128,13 @@ class UpdateHandler(AbstractHandler):
 class GetAllHandler(AbstractHandler):
     def handle(self, request):
         if request == Actions["READ_ALL"]:
-            print("Requesting from handler")
+            print("Getting all from handler")
+
+            records = super()._store.load_store()  # AbstractHandler._store.load_store() #
+            idx = 1
+            for r in records:
+                print(f"{idx}:\t{r.year}\t{r.kind}\t{r.total_kg}")
+                idx += 1
         else:
             super().handle(request)
 
