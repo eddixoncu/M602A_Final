@@ -7,7 +7,7 @@ from m602.Emission import Emission
 
 class Store:
     """
-    Define a  based JSON file storage.
+    Define a  based sqlite storage.
     """
 
     def __init__(self, data=None, path="store.db"):
@@ -16,21 +16,20 @@ class Store:
         self.data = data
         self.path = path
 
-    def delete_storage(self):
-        pass
-
     def get_all(self):
+        """
+        Returns all recorded emissions
+        :return: Stored emissions ordered by year.
+        """
         try:
             with sqlite3.connect(self.path) as conn:
                 cursor = conn.cursor()
-                cursor.execute("SELECT year, total_kg, energy_emission, waste_emission, travel_emission FROM emission "
-                               "ORDER BY year")
+                cursor.execute("""SELECT year, total_kg, energy_emission, waste_emission, travel_emission FROM emission 
+                               ORDER BY year""")
                 output = cursor.fetchall()
                 for row in output:  # row is a tuple
                     e = Emission(row[0], row[2], row[3], row[4])
                     self.data.append(e)
-
-                # conn.close()
 
             return self.data
 
@@ -40,6 +39,11 @@ class Store:
             return []
 
     def exists_emission_by_year(self, year):
+        """
+        Checks if exist a record emission for the given year.
+        :param year: Year to be checked.
+        :return: True if exists, false if it doesn't
+        """
         try:
             with sqlite3.connect(self.path) as conn:
                 cursor = conn.cursor()
@@ -51,6 +55,10 @@ class Store:
             print(f"ISSUE on exists: {exc}")
 
     def add_record(self, record: Emission):
+        """
+        Inserts into the database a new record of emission.
+        :param record: Emission object to be stored.
+        """
         try:
             with sqlite3.connect(self.path) as conn:
                 cursor = conn.cursor()
@@ -62,6 +70,10 @@ class Store:
             print(f"ISSUE on add_record: {exc}")
 
     def update_record(self, record: Emission):
+        """
+        Updates the record of emission.
+        :param record: Emission object to be updated.
+        """
         try:
             with sqlite3.connect(self.path) as conn:
                 cursor = conn.cursor()

@@ -9,9 +9,8 @@ from m602.UserActions import UserMenuActions as Actions, EmissionType
 from m602.UserActions import show_emission_options
 from m602.UserActions import (get_emission_by_energy_from_input,
                               get_emission_by_waste_from_input,
-                              get_emission_by_travel_from_input)
-from m602.EmissionsCalculator import EmissionsCalculator
-from m602.Emission import Emission
+                              get_emission_by_travel_from_input,
+                              clear)
 from m602.Store import Store
 
 
@@ -66,7 +65,7 @@ class AbstractHandler(Handler):
         return None
 
 
-class CreateHandler(AbstractHandler):
+class CreateOrUpdateHandler(AbstractHandler):
     def handle(self, request):
         if request == Actions["CREATE"]:
             print("Creating from handler")
@@ -96,32 +95,12 @@ class CreateHandler(AbstractHandler):
             super().handle(request)
 
 
-class UpdateHandler(AbstractHandler):
+class ClearHandler(AbstractHandler):
     def handle(self, request):
-        if request == Actions["UPDATE"]:
-            print("Updating from handler")
-            emission_type = show_emission_options()
-            if emission_type == 0:
-                return
+        if request == Actions["CLEAR"]:
+            print("Clearing from handler")
+            clear()
 
-            year = int(input("Enter the year to be calculated: \n"))
-            emission = None
-            if emission_type == EmissionType["ENERGY"]:
-                emission = get_emission_by_energy_from_input(year)
-            elif emission_type == EmissionType["WASTE"]:
-                emission = get_emission_by_waste_from_input(year)
-            elif emission_type == EmissionType["TRAVEL"]:
-                emission = get_emission_by_travel_from_input(year)
-
-            emission.total_kg = emission.energy_emission + emission.waste_emission + emission.travel_emission
-
-            exists = super()._store.exists_emission_by_year(year)
-            if exists:
-                super()._store.update_record(emission)
-            else:
-                super()._store.add_record(emission)
-
-            print("Emission updated ", emission)
         else:
             super().handle(request)
 
@@ -160,11 +139,11 @@ class ActionHandler:
         """
         Executes the user's choice with a chain of handlers.
         """
-        create_handler = CreateHandler()
-        update_handler = UpdateHandler()
+        create_update_handler = CreateOrUpdateHandler()
         get_all_data_handler = GetAllHandler()
         generate_resport_handler = GenerateReportHandler()
+        clear_handler = ClearHandler()
 
-        create_handler.set_next(update_handler).set_next(generate_resport_handler).set_next(get_all_data_handler)
+        create_update_handler.set_next(generate_resport_handler).set_next(get_all_data_handler).set_next(clear_handler)
 
-        create_handler.handle(self.option)
+        create_update_handler.handle(self.option)
