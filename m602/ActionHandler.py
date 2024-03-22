@@ -83,6 +83,14 @@ class CreateHandler(AbstractHandler):
             elif emission_type == EmissionType["TRAVEL"]:
                 emission = get_emission_by_travel_from_input(year)
 
+            emission.total_kg = emission.energy_emission + emission.waste_emission + emission.travel_emission
+
+            exists = super()._store.exists_emission_by_year(year)
+            if exists:
+                super()._store.update_record(emission)
+            else:
+                super()._store.add_record(emission)
+
             print("Emission created ", emission)
         else:
             super().handle(request)
@@ -105,6 +113,14 @@ class UpdateHandler(AbstractHandler):
             elif emission_type == EmissionType["TRAVEL"]:
                 emission = get_emission_by_travel_from_input(year)
 
+            emission.total_kg = emission.energy_emission + emission.waste_emission + emission.travel_emission
+
+            exists = super()._store.exists_emission_by_year(year)
+            if exists:
+                super()._store.update_record(emission)
+            else:
+                super()._store.add_record(emission)
+
             print("Emission updated ", emission)
         else:
             super().handle(request)
@@ -115,10 +131,10 @@ class GetAllHandler(AbstractHandler):
         if request == Actions["READ_ALL"]:
             print("Getting all from handler")
 
-            records = super()._store.load_store()  # AbstractHandler._store.load_store() #
+            records = super()._store.get_all()  # AbstractHandler._store.load_store() #
             idx = 1
             for r in records:
-                print(f"{idx}:\t{r.year}\t{r.kind}\t{r.total_kg}")
+                print(f"{idx}:\t{r.year}\t{r.total_kg}\t{r.energy_emission}\t{r.waste_emission}\t{r.travel_emission}")
                 idx += 1
         else:
             super().handle(request)

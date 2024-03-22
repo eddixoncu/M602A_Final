@@ -96,8 +96,8 @@ def get_emission_by_energy_from_input(year):
     electricity_bill = float(input("Enter the average monthly electricity bill: "))
     gas_bill = float(input("Enter the average monthly gas bill: "))
     fuel_bill = float(input("Enter the average monthly fuel bill: "))
-    total_energy_emission = calculator.calculate_energy_emissions(electricity_bill, gas_bill, fuel_bill)
-    return Emission(year, total_energy_emission, "ENERGY")
+    energy_emission = calculator.calculate_energy_emissions(electricity_bill, gas_bill, fuel_bill)
+    return Emission(year, energy_emission)
 
 
 def get_emission_by_waste_from_input(year):
@@ -108,8 +108,8 @@ def get_emission_by_waste_from_input(year):
     """
     generated_waste = float(input("Enter the average of generated wasted in Kg: "))
     percentage = float(input("Enter the percentage of recycled/composted waste (0-100)%"))
-    total_waste_emission = calculator.calculate_waste_emissions(generated_waste, percentage)
-    return Emission(year, total_waste_emission, "WASTE")
+    waste_emission = calculator.calculate_waste_emissions(generated_waste, percentage)
+    return Emission(year, waste_emission=waste_emission)
 
 
 def get_emission_by_travel_from_input(year):
@@ -121,4 +121,4 @@ def get_emission_by_travel_from_input(year):
     kilometers_traveled = float(input("Enter the kilometres traveled by your employees: "))
     avg_fuel_efficiency = float(input("Enter the fuel efficiency in liters per 100 Km: "))
     travel_emission = calculator.calculate_travel_emissions(kilometers_traveled, avg_fuel_efficiency)
-    return Emission(year, travel_emission, "TRAVEL")
+    return Emission(year, travel_emission=travel_emission)
