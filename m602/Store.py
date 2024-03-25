@@ -27,6 +27,7 @@ class Store:
                 cursor.execute("""SELECT year, total_kg, energy_emission, waste_emission, travel_emission FROM emission 
                                ORDER BY year""")
                 output = cursor.fetchall()
+                self.data =[]
                 for row in output:  # row is a tuple
                     e = Emission(row[0], row[2], row[3], row[4])
                     self.data.append(e)

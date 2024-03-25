@@ -5,6 +5,8 @@ Contains classes intended for managing the user's request.
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Optional
+
+from m602.ReportGenerator import ChartGenerator
 from m602.UserActions import UserMenuActions as Actions, EmissionType
 from m602.UserActions import show_emission_options
 from m602.UserActions import (get_emission_by_energy_from_input,
@@ -123,6 +125,11 @@ class GenerateReportHandler(AbstractHandler):
     def handle(self, request):
         if request == Actions["GENERATE_REPORT"]:
             print("Generating from handler")
+
+            emissions = super()._store.get_all()
+            report_gen = ChartGenerator((),{}, "Emissions of CO2 per year", "Kg" )
+            report_gen.generate_co2_report(emissions)
+
         else:
             super().handle(request)
 
