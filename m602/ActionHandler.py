@@ -69,8 +69,8 @@ class AbstractHandler(Handler):
 
 class CreateOrUpdateHandler(AbstractHandler):
     def handle(self, request):
-        if request == Actions["CREATE"]:
-            print("Creating from handler")
+        if request == Actions["CREATE"] or request == Actions["UPDATE"]:
+            # print("Creating from handler")
             emission_type = show_emission_options()
             if emission_type == 0:
                 return
@@ -88,11 +88,21 @@ class CreateOrUpdateHandler(AbstractHandler):
 
             exists = super()._store.exists_emission_by_year(year)
             if exists:
-                super()._store.update_record(emission)
+                previous = super()._store.get_emission_by_year(year)
+                if emission_type == EmissionType["ENERGY"]:
+                    previous.energy_emission = emission.energy_emission
+                elif emission_type == EmissionType["WASTE"]:
+                    previous.waste_emission = emission.waste_emission
+                elif emission_type == EmissionType["TRAVEL"]:
+                    previous.travel_emission = emission.travel_emission
+
+                previous.total_kg = previous.energy_emission + previous.waste_emission + previous.travel_emission
+                super()._store.update_record(previous)
+                print("Emission updated ")
             else:
                 super()._store.add_record(emission)
+                print("Emission created ")
 
-            print("Emission created ", emission)
         else:
             super().handle(request)
 
@@ -100,7 +110,7 @@ class CreateOrUpdateHandler(AbstractHandler):
 class ClearHandler(AbstractHandler):
     def handle(self, request):
         if request == Actions["CLEAR"]:
-            print("Clearing from handler")
+            # print("Clearing from handler")
             clear()
 
         else:
@@ -110,12 +120,13 @@ class ClearHandler(AbstractHandler):
 class GetAllHandler(AbstractHandler):
     def handle(self, request):
         if request == Actions["READ_ALL"]:
-            print("Getting all from handler")
+            # print("Getting all from handler")
 
             records = super()._store.get_all()  # AbstractHandler._store.load_store() #
             idx = 1
             for r in records:
-                print(f"{idx}:\t{r.year}\t{r.total_kg}\t{r.energy_emission}\t{r.waste_emission}\t{r.travel_emission}")
+                print(
+                    f"{idx}:\tYEAR: {r.year}\tTOTAL:{r.total_kg}\tENE:{r.energy_emission}\tWST:{r.waste_emission}\tTRVL:{r.travel_emission}")
                 idx += 1
         else:
             super().handle(request)
@@ -124,10 +135,10 @@ class GetAllHandler(AbstractHandler):
 class GenerateReportHandler(AbstractHandler):
     def handle(self, request):
         if request == Actions["GENERATE_REPORT"]:
-            print("Generating from handler")
+            # print("Generating from handler")
 
             emissions = super()._store.get_all()
-            report_gen = ChartGenerator((),{}, "Emissions of CO2 per year", "Kg" )
+            report_gen = ChartGenerator((), {}, "", "")
             report_gen.generate_co2_report(emissions)
 
         else:

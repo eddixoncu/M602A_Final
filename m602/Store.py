@@ -55,6 +55,24 @@ class Store:
         except Exception as exc:
             print(f"ISSUE on exists: {exc}")
 
+    def get_emission_by_year(self, year):
+        """
+        Checks if exist a record emission for the given year.
+        :param year: Year to be checked.
+        :return: True if exists, false if it doesn't
+        """
+        try:
+            with sqlite3.connect(self.path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("""SELECT year, total_kg, energy_emission, waste_emission, travel_emission FROM emission 
+                                               WHERE year = ?""", (year,))
+                # cursor.execute("SELECT COUNT(*) FROM emission WHERE year = ?", (year,))
+                row = cursor.fetchone()   # tuples array
+                e = Emission(row[0], row[2], row[3], row[4])
+                return e
+        except Exception as exc:
+            print(f"ISSUE on exists: {exc}")
+
     def add_record(self, record: Emission):
         """
         Inserts into the database a new record of emission.

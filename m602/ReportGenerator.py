@@ -4,6 +4,7 @@ Module that generates reports
 
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 from datetime import datetime
 
 from m602.Emission import Emission
@@ -28,7 +29,10 @@ class ChartGenerator:
         self.title = title
         self.y_label = y_label
 
-    def build_report(self):
+    def generate_report(self):
+        """
+        Based on the data stored in the attributes create a report and save it into the hard disk in a default path.
+        """
         x = np.arange((len(self.categories)))
         width = 0.125  # the width of the bars
         multiplier = 0
@@ -53,8 +57,8 @@ class ChartGenerator:
         self.output_file = f"chart_{date_string}.pdf"
         plt.savefig(self.output_file, format="pdf", bbox_inches="tight")
         plt.show()
-
         # plt.close()
+        print("Report generated at: ", os.path.abspath(self.output_file))
 
     def _get_max_data(self):
         maximum = 0
@@ -66,20 +70,20 @@ class ChartGenerator:
         return maximum
 
     def generate_co2_report(self, emissions: [Emission]):
+        """
+        Convert the list of emissions into the required attributes and then generate a CO2 emission report
+        :param emissions: List of CO2 emissions
+        """
         measurements_x_year = {}  # year:(e,w,t,T)
-        for em in emissions:
-            print(f"{em.year}: {em.total_kg}, {em.energy_emission} + {em.waste_emission} + {em.travel_emission}")
+        # for em in emissions:
+        #     print(f"{em.year}: {em.total_kg}, {em.energy_emission} + {em.waste_emission} + {em.travel_emission}")
 
         energy = tuple(e.energy_emission for e in emissions)
         waste = tuple(e.waste_emission for e in emissions)
         travel = tuple(e.travel_emission for e in emissions)
         total = tuple(e.total_kg for e in emissions)
         years = tuple(e.year for e in emissions)
-        print(years)
-        print(energy)
-        print(waste)
-        print(travel)
-        print(total)
+
         measurements_x_year["Energy"] = energy
         measurements_x_year["Waste"] = waste
         measurements_x_year["Travel"] = travel
@@ -87,9 +91,9 @@ class ChartGenerator:
 
         self.categories = years
         self.data = measurements_x_year
-        self.title = "Emissions of CO2"
+        self.title = "Emissions of CO2 per year"
         self.y_label = "Kg CO2"
-        self.build_report()
+        self.generate_report()
 
 """ 
 # USAGE
